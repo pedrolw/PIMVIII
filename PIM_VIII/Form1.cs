@@ -13,7 +13,7 @@ namespace PIM_VIII
 {
     public partial class Form1 : Form
     {
-        OleDbConnection con = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=F:\Documentos\UNIP\5o Bimestre\PROJETO INTEGRADO MULTIDISCIPLINAR VIII\Project\PIM_VIII\DataBase.accdb");
+        OleDbConnection con = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=F:\Documentos\UNIP\5o Bimestre\PROJETO INTEGRADO MULTIDISCIPLINAR VIII\Project\PIMVIII\DataBase.accdb");
         public Form1()
         {
             InitializeComponent();
@@ -29,7 +29,6 @@ namespace PIM_VIII
             cmd.ExecuteNonQuery();
             con.Close();
             textBox1.Text = "";
-            textBox2.Text = "";
             gridRefresh();
             MessageBox.Show("Dados inseridos com sucesso!");
         }
@@ -48,7 +47,6 @@ namespace PIM_VIII
             cmd.ExecuteNonQuery();
             con.Close();
             textBox1.Text = "";
-            textBox2.Text = "";
             gridRefresh();
             MessageBox.Show("Dados apagados com sucesso!");
         }
@@ -65,6 +63,40 @@ namespace PIM_VIII
             da.Fill(dt);
             dataGridView1.DataSource = dt;
             con.Close();
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+                if ((DateTime)row.Cells[1].Value > DateTime.Now & (DateTime)row.Cells[1].Value > DateTime.Now.AddDays(+2) & (DateTime)row.Cells[1].Value <= DateTime.Now.AddDays(+5))
+                {
+                    row.DefaultCellStyle.BackColor = Color.Green;
+                }
+                else if ((DateTime)row.Cells[1].Value > DateTime.Now & (DateTime)row.Cells[1].Value <= DateTime.Now.AddDays(+2))
+                {
+                    row.DefaultCellStyle.BackColor = Color.Yellow;
+                }
+                else if ((DateTime)row.Cells[1].Value == DateTime.Now)
+                {
+                    row.DefaultCellStyle.BackColor = Color.Red;
+                    MessageBox.Show("Uma ou mais tarefas vencem hoje!");
+                }
+                else if ((DateTime)row.Cells[1].Value < DateTime.Now)
+                {
+                    row.DefaultCellStyle.BackColor = Color.Red;
+                    MessageBox.Show("Uma ou mais tarefas já venceram o prazo!");
+                }
         }
-}
+
+        private void btnAlterar_Click(object sender, EventArgs e)
+        {
+            con.Open();
+            OleDbCommand cmd = con.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "update Tabela1 set DataLimite= '"+dateTimePicker1.Text+"' where Tarefa = '"+textBox1.Text+"'";
+            cmd.ExecuteNonQuery();
+            con.Close();
+            textBox1.Text = "";
+            gridRefresh();
+            MessageBox.Show("Dados alterados com sucesso!");
+        }
+    }
+
+    
 }
